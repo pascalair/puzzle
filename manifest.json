@@ -2,7 +2,7 @@
   "name": "Puzzle Taquin",
   "short_name": "Puzzle",
   "description": "Jeu de puzzle taquin classique",
-  "start_url": "puzzle.html",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#667eea",
   "theme_color": "#667eea",
