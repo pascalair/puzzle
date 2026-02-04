@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#667eea">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <title>Jeu de Puzzle Taquin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 95vw;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: clamp(1.5em, 5vw, 2.5em);
+        }
+
+        .info {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: #f0f0f0;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-size: clamp(0.9em, 3vw, 1.1em);
+        }
+
+        .stat span {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        #puzzle {
+            display: grid;
+            grid-gap: 5px;
+            margin: 0 auto 15px;
+            width: fit-content;
+            background: #ddd;
+            padding: 5px;
+            border-radius: 10px;
+            max-width: 95vw;
+        }
+
+        .tile {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: clamp(1.2em, 4vw, 2em);
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        .tile:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .tile.empty {
+            background: transparent;
+            box-shadow: none;
+            cursor: default;
+        }
+
+        .tile.empty:active {
+            transform: none;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: clamp(0.9em, 3vw, 1em);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+            touch-action: manipulation;
+        }
+
+        button:active {
+            background: #764ba2;
+            transform: scale(0.95);
+        }
+
+        .victory {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .victory-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            animation: bounce 0.5s;
+            max-width: 90vw;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .victory h2 {
+            color: #667eea;
+            font-size: clamp(2em, 6vw, 3em);
+            margin-bottom: 15px;
+        }
+
+        .victory p {
+            font-size: clamp(1em, 4vw, 1.5em);
+            margin-bottom: 15px;
+        }
+
+        .install-prompt {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #667eea;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 999;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { transform: translate(-50%, 100px); }
+            to { transform: translate(-50%, 0); }
+        }
+
+        .install-prompt button {
+            margin: 5px;
+            background: white;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧩 Puzzle Taquin</h1>
+        
+        <div class="info">
+            <div class="stat">Coups: <span id="moves">0</span></div>
+            <div class="stat">Temps: <span id="time">00:00</span></div>
+        </div>
+
+        <div id="puzzle"></div>
+
+        <div class="buttons">
+            <button onclick="newGame()">🔄 Nouveau</button>
+            <button onclick="changeDifficulty()">⚙️ <span id="difficulty">4x4</span></button>
+        </div>
+    </div>
+
+    <div class="victory" id="victory">
+        <div class="victory-content">
+            <h2>🎉 Bravo !</h2>
+            <p>Puzzle résolu !</p>
+            <p>Coups: <span id="finalMoves"></span></p>
+            <p>Temps: <span id="finalTime"></span></p>
+            <button onclick="closeVictory()">Fermer</button>
+            <button onclick="closeVictory(); newGame();">Rejouer</button>
+        </div>
+    </div>
+
+    <div class="install-prompt" id="installPrompt">
+        <p>📲 Installer l'application ?</p>
+        <button onclick="installApp()">Installer</button>
+        <button onclick="dismissInstall()">Plus tard</button>
+    </div>
+
+    <script>
+        let gridSize = 4;
+        let tiles = [];
+        let emptyIndex;
+        let moves = 0;
+        let startTime;
+        let timerInterval;
+        let deferredPrompt;
+
+        // Détection du support PWA
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').style.display = 'block';
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    deferredPrompt = null;
+                    dismissInstall();
+                });
+            }
+        }
+
+        function dismissInstall() {
+            document.getElementById('installPrompt').style.display = 'none';
+        }
+
+        function initGame() {
+            const puzzle = document.getElementById('puzzle');
+            
+            // Calculer la taille des tuiles en fonction de l'écran
+            const maxWidth = Math.min(window.innerWidth * 0.85, 450);
+            const tileSize = Math.floor(maxWidth / gridSize) - 5;
+            
+            puzzle.style.gridTemplateColumns = `repeat(${gridSize}, ${tileSize}px)`;
+            
+            tiles = Array.from({length: gridSize * gridSize - 1}, (_, i) => i + 1);
+            tiles.push(0);
+            
+            shuffleTiles();
+            
+            moves = 0;
+            document.getElementById('moves').textContent = moves;
+            
+            startTimer();
+            renderPuzzle(tileSize);
+        }
+
+        function shuffleTiles() {
+            for (let i = 0; i < 1000; i++) {
+                const validMoves = getValidMoves();
+                const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+                swapTiles(randomMove, tiles.indexOf(0));
+            }
+        }
+
+        function getValidMoves() {
+            const empty = tiles.indexOf(0);
+            const row = Math.floor(empty / gridSize);
+            const col = empty % gridSize;
+            const valid = [];
+
+            if (row > 0) valid.push(empty - gridSize);
+            if (row < gridSize - 1) valid.push(empty + gridSize);
+            if (col > 0) valid.push(empty - 1);
+            if (col < gridSize - 1) valid.push(empty + 1);
+
+            return valid;
+        }
+
+        function renderPuzzle(tileSize) {
+            const puzzle = document.getElementById('puzzle');
+            puzzle.innerHTML = '';
+
+            tiles.forEach((num, index) => {
+                const tile = document.createElement('div');
+                tile.className = 'tile';
+                tile.style.width = tileSize + 'px';
+                tile.style.height = tileSize + 'px';
+                
+                if (num === 0) {
+                    tile.classList.add('empty');
+                } else {
+                    tile.textContent = num;
+                    tile.onclick = () => moveTile(index);
+                    
+                    // Support tactile amélioré
+                    tile.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        moveTile(index);
+                    }, { passive: false });
+                }
+                
+                puzzle.appendChild(tile);
+            });
+        }
+
+        function moveTile(index) {
+            const emptyIndex = tiles.indexOf(0);
+            const validMoves = getValidMoves();
+
+            if (validMoves.includes(index)) {
+                swapTiles(index, emptyIndex);
+                moves++;
+                document.getElementById('moves').textContent = moves;
+                
+                // Vibration sur mobile
+                if (navigator.vibrate) {
+                    navigator.vibrate(10);
+                }
+                
+                const maxWidth = Math.min(window.innerWidth * 0.85, 450);
+                const tileSize = Math.floor(maxWidth / gridSize) - 5;
+                renderPuzzle(tileSize);
+                checkWin();
+            }
+        }
+
+        function swapTiles(i, j) {
+            [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+        }
+
+        function checkWin() {
+            const isWin = tiles.every((num, index) => {
+                if (index === tiles.length - 1) return num === 0;
+                return num === index + 1;
+            });
+
+            if (isWin) {
+                clearInterval(timerInterval);
+                
+                // Vibration de victoire
+                if (navigator.vibrate) {
+                    navigator.vibrate([100, 50, 100, 50, 200]);
+                }
+                
+                document.getElementById('finalMoves').textContent = moves;
+                document.getElementById('finalTime').textContent = document.getElementById('time').textContent;
+                document.getElementById('victory').style.display = 'flex';
+            }
+        }
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            startTime = Date.now();
+            
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                const seconds = (elapsed % 60).toString().padStart(2, '0');
+                document.getElementById('time').textContent = `${minutes}:${seconds}`;
+            }, 1000);
+        }
+
+        function newGame() {
+            initGame();
+        }
+
+        function changeDifficulty() {
+            const sizes = [3, 4, 5];
+            const currentIndex = sizes.indexOf(gridSize);
+            gridSize = sizes[(currentIndex + 1) % sizes.length];
+            document.getElementById('difficulty').textContent = `${gridSize}x${gridSize}`;
+            initGame();
+        }
+
+        function closeVictory() {
+            document.getElementById('victory').style.display = 'none';
+        }
+
+        // Gérer le redimensionnement
+        window.addEventListener('resize', () => {
+            const maxWidth = Math.min(window.innerWidth * 0.85, 450);
+            const tileSize = Math.floor(maxWidth / gridSize) - 5;
+            renderPuzzle(tileSize);
+        });
+
+        // Enregistrer le Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(() => {});
+        }
+
+        window.onload = initGame;
+    </script>
+</body>
+</html>
