@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#667eea">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="../../css/common.css">
+  <title>Démineur — Mini-Jeux</title>
+  <script>
+    document.documentElement.setAttribute(
+      'data-theme', localStorage.getItem('mj-theme') || 'light');
+  </script>
+  <style>
+    #board {
+      display: grid;
+      gap: 2px;
+      margin: 0 auto;
+      background: var(--surface-soft);
+      padding: 4px;
+      border-radius: 8px;
+      width: fit-content;
+      touch-action: manipulation;
+      user-select: none;
+    }
+    .cell {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      cursor: pointer;
+      color: #fff;
+    }
+    .cell:active { transform: scale(0.92); }
+    .cell.revealed {
+      background: var(--surface-softer);
+      cursor: default;
+    }
+    .cell.mine { background: #e74c3c; }
+    .cell.flag { background: linear-gradient(135deg, #ffce3a, #ff9f1a); }
+    .cell.c1 { color:#1976d2; } .cell.c2 { color:#388e3c; }
+    .cell.c3 { color:#d32f2f; } .cell.c4 { color:#7b1fa2; }
+    .cell.c5 { color:#c2185b; } .cell.c6 { color:#0097a7; }
+    .cell.c7 { color:#455a64; } .cell.c8 { color:#000; }
+    #flagBtn.armed { background: #ff9f1a; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="chips" id="modes"></div>
+    <p class="best" id="best"></p>
+    <div class="info">
+      <div class="stat">💣 <span id="minesLeft">0</span></div>
+      <div class="stat">Temps : <span id="time">00:00</span></div>
+    </div>
+    <div id="board"></div>
+    <div class="buttons">
+      <button id="flagBtn" onclick="Game.toggleFlagMode()">🚩 Drapeau</button>
+      <button onclick="Game.restart()">🔄 Rejouer</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="over">
+    <div class="overlay-content">
+      <h2 id="overTitle"></h2>
+      <p id="overMsg"></p>
+      <div class="buttons">
+        <button class="ghost" onclick="Game.closeOver()">Fermer</button>
+        <button onclick="Game.closeOver(); Game.restart();">Rejouer</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/core.js"></script>
+  <script src="demineur.js"></script>
+</body>
+</html>

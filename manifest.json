@@ -1,7 +1,7 @@
 {
-  "name": "Puzzle Taquin",
-  "short_name": "Puzzle",
-  "description": "Jeu de puzzle taquin classique",
+  "name": "Mini-Jeux",
+  "short_name": "Mini-Jeux",
+  "description": "Une collection de petits jeux pour passer le temps : taquin, 2048, démineur, memory.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#667eea",

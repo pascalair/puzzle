@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#667eea">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="../../css/common.css">
+  <title>Memory — Mini-Jeux</title>
+  <script>
+    document.documentElement.setAttribute(
+      'data-theme', localStorage.getItem('mj-theme') || 'light');
+  </script>
+  <style>
+    #board {
+      display: grid;
+      gap: 8px;
+      margin: 0 auto;
+      width: fit-content;
+      max-width: 95vw;
+    }
+    .card-tile {
+      position: relative;
+      border-radius: 10px;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.3s;
+    }
+    .card-tile.flipped, .card-tile.matched { transform: rotateY(180deg); }
+    .card-tile .face {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      box-shadow: 0 4px 6px var(--shadow-soft);
+    }
+    .card-tile .back {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: #fff;
+      font-size: 1.6em;
+    }
+    .card-tile .front {
+      background: var(--surface-softer);
+      transform: rotateY(180deg);
+    }
+    .card-tile.matched .front { background: #d3f5dd; }
+    :root[data-theme="dark"] .card-tile.matched .front { background: #1f4d33; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="chips" id="modes"></div>
+    <p class="best" id="best"></p>
+    <div class="info">
+      <div class="stat">Coups : <span id="moves">0</span></div>
+      <div class="stat">Paires : <span id="pairs">0</span></div>
+    </div>
+    <div id="board"></div>
+    <div class="buttons">
+      <button onclick="Game.restart()">🔄 Rejouer</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="over">
+    <div class="overlay-content">
+      <h2>🎉 Gagné !</h2>
+      <p id="overMsg"></p>
+      <div class="buttons">
+        <button class="ghost" onclick="Game.closeOver()">Fermer</button>
+        <button onclick="Game.closeOver(); Game.restart();">Rejouer</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/core.js"></script>
+  <script src="memory.js"></script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#667eea">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="../../css/common.css">
+  <title>2048 — Mini-Jeux</title>
+  <script>
+    document.documentElement.setAttribute(
+      'data-theme', localStorage.getItem('mj-theme') || 'light');
+  </script>
+  <style>
+    #board {
+      position: relative;
+      background: var(--surface-soft);
+      border-radius: 10px;
+      padding: var(--gap);
+      margin: 0 auto;
+      touch-action: none;
+      display: grid;
+      gap: var(--gap);
+      --gap: 8px;
+    }
+    .cell {
+      background: var(--surface-softer);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: var(--fs);
+      color: #776e65;
+      transition: transform 0.08s ease;
+    }
+    .cell[data-v="0"] { color: transparent; }
+    .cell.pop { animation: pop 0.15s ease; }
+    @keyframes pop { 0% { transform: scale(0.6); } 100% { transform: scale(1); } }
+
+    .cell[data-v="2"]    { background:#eee4da; }
+    .cell[data-v="4"]    { background:#ede0c8; }
+    .cell[data-v="8"]    { background:#f2b179; color:#f9f6f2; }
+    .cell[data-v="16"]   { background:#f59563; color:#f9f6f2; }
+    .cell[data-v="32"]   { background:#f67c5f; color:#f9f6f2; }
+    .cell[data-v="64"]   { background:#f65e3b; color:#f9f6f2; }
+    .cell[data-v="128"]  { background:#edcf72; color:#f9f6f2; }
+    .cell[data-v="256"]  { background:#edcc61; color:#f9f6f2; }
+    .cell[data-v="512"]  { background:#edc850; color:#f9f6f2; }
+    .cell[data-v="1024"] { background:#edc53f; color:#f9f6f2; font-size:calc(var(--fs)*0.8); }
+    .cell[data-v="2048"] { background:#edc22e; color:#f9f6f2; font-size:calc(var(--fs)*0.8); }
+    .cell.big            { background:#3c3a32; color:#f9f6f2; font-size:calc(var(--fs)*0.7); }
+    .hint { color: var(--text-soft); font-size: .85em; margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="chips" id="modes"></div>
+    <p class="best" id="best"></p>
+    <div class="info">
+      <div class="stat">Score : <span id="score">0</span></div>
+      <div class="stat">Record : <span id="hiscore">0</span></div>
+    </div>
+    <div id="board"></div>
+    <p class="hint">Glisse (ou flèches) pour fusionner les tuiles.</p>
+    <div class="buttons">
+      <button onclick="Game.restart()">🔄 Nouvelle partie</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="over">
+    <div class="overlay-content">
+      <h2 id="overTitle">Fin !</h2>
+      <p id="overMsg"></p>
+      <p>Score : <span id="finalScore"></span></p>
+      <div class="buttons">
+        <button class="ghost" id="continueBtn" onclick="Game.keepGoing()">Continuer</button>
+        <button onclick="Game.closeOver(); Game.restart();">Rejouer</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/core.js"></script>
+  <script src="2048.js"></script>
+</body>
+</html>

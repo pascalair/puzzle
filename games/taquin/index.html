@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#667eea">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="../../css/common.css">
+  <title>Taquin — Mini-Jeux</title>
+  <script>
+    document.documentElement.setAttribute(
+      'data-theme', localStorage.getItem('mj-theme') || 'light');
+  </script>
+  <style>
+    #puzzle {
+      display: grid;
+      grid-gap: 5px;
+      margin: 0 auto;
+      width: fit-content;
+      background: var(--surface-soft);
+      padding: 5px;
+      border-radius: 10px;
+      max-width: 95vw;
+    }
+    .tile {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: var(--tile-text);
+      font-size: clamp(1.2em, 4vw, 2em);
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: transform 0.12s ease;
+      box-shadow: 0 4px 6px var(--shadow-soft);
+      user-select: none;
+      touch-action: manipulation;
+    }
+    .tile:active { transform: scale(0.95); }
+    .tile.empty { background: transparent; box-shadow: none; cursor: default; }
+    .tile.empty:active { transform: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="chips" id="modes"></div>
+    <p class="best" id="best"></p>
+    <div class="info">
+      <div class="stat">Coups : <span id="moves">0</span></div>
+    </div>
+    <div id="puzzle"></div>
+    <div class="buttons">
+      <button onclick="Game.restart()">🔄 Recommencer</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="victory">
+    <div class="overlay-content">
+      <h2>🎉 Bravo !</h2>
+      <p id="vMsg"></p>
+      <p>Coups : <span id="finalMoves"></span></p>
+      <div class="buttons">
+        <button class="ghost" onclick="Game.closeVictory()">Fermer</button>
+        <button onclick="Game.closeVictory(); Game.restart();">Rejouer</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/core.js"></script>
+  <script src="taquin.js"></script>
+</body>
+</html>

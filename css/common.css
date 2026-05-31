@@ -1,0 +1,272 @@
+/* ===== Mini-Jeux — feuille de style partagée ===== */
+
+:root {
+  --grad-start: #667eea;
+  --grad-end: #764ba2;
+  --bg: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%);
+  --surface: #ffffff;
+  --surface-soft: #f0f0f0;
+  --surface-softer: #f7f7fb;
+  --text: #333333;
+  --text-soft: #777777;
+  --accent: #667eea;
+  --accent-2: #764ba2;
+  --tile-text: #ffffff;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --shadow-soft: rgba(0, 0, 0, 0.2);
+  --border: #e2e2ec;
+}
+
+:root[data-theme="dark"] {
+  --grad-start: #232544;
+  --grad-end: #15162a;
+  --surface: #20223d;
+  --surface-soft: #2a2c4d;
+  --surface-softer: #262844;
+  --text: #ececf5;
+  --text-soft: #9a9bb8;
+  --accent: #8b9cff;
+  --accent-2: #b08bff;
+  --tile-text: #ffffff;
+  --shadow: rgba(0, 0, 0, 0.5);
+  --shadow-soft: rgba(0, 0, 0, 0.35);
+  --border: #34375c;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  touch-action: manipulation;
+  padding: 16px 12px 28px;
+  transition: background 0.3s ease;
+}
+
+/* ===== En-tête partagé (bouton retour + titre + thème) ===== */
+.app-header {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.app-header h1 {
+  flex: 1;
+  text-align: center;
+  color: #ffffff;
+  font-size: clamp(1.3em, 5vw, 2em);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.icon-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  font-size: 1.3em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s, background 0.2s;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.icon-btn:active {
+  transform: scale(0.9);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* ===== Carte de contenu ===== */
+.card {
+  text-align: center;
+  background: var(--surface);
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px var(--shadow);
+  max-width: 95vw;
+  width: 100%;
+  max-width: 480px;
+}
+
+/* ===== Barre de stats ===== */
+.info {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 15px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  background: var(--surface-soft);
+  padding: 8px 15px;
+  border-radius: 10px;
+  font-size: clamp(0.9em, 3vw, 1.1em);
+  color: var(--text);
+}
+
+.stat span {
+  font-weight: bold;
+  color: var(--accent);
+}
+
+/* ===== Boutons ===== */
+.buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+button {
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  padding: 12px 20px;
+  font-size: clamp(0.9em, 3vw, 1em);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: bold;
+  touch-action: manipulation;
+}
+
+button:active {
+  background: var(--accent-2);
+  transform: scale(0.95);
+}
+
+button.ghost {
+  background: var(--surface-soft);
+  color: var(--text);
+}
+
+/* ===== Modale (victoire / fin de partie) ===== */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.overlay.show {
+  display: flex;
+}
+
+.overlay-content {
+  background: var(--surface);
+  color: var(--text);
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  animation: bounce 0.5s;
+  max-width: 90vw;
+  width: 100%;
+  max-width: 360px;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.overlay-content h2 {
+  color: var(--accent);
+  font-size: clamp(1.8em, 6vw, 2.6em);
+  margin-bottom: 12px;
+}
+
+.overlay-content p {
+  font-size: clamp(1em, 4vw, 1.3em);
+  margin-bottom: 10px;
+}
+
+.overlay-content .buttons {
+  margin-top: 18px;
+}
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(120px);
+  background: var(--accent);
+  color: #ffffff;
+  padding: 12px 22px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px var(--shadow);
+  z-index: 1100;
+  font-weight: bold;
+  opacity: 0;
+  transition: transform 0.3s, opacity 0.3s;
+  pointer-events: none;
+  text-align: center;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* ===== Sélecteur de mode/difficulté ===== */
+.chips {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.chip {
+  background: var(--surface-soft);
+  color: var(--text);
+  border: 2px solid transparent;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 0.95em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chip.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.chip:active {
+  transform: scale(0.95);
+}
+
+.best {
+  color: var(--text-soft);
+  font-size: 0.9em;
+  margin-bottom: 12px;
+  min-height: 1.2em;
+}
