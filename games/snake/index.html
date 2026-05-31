@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#667eea">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="../../css/common.css">
+  <title>Snake — Mini-Jeux</title>
+  <script>
+    document.documentElement.setAttribute(
+      'data-theme', localStorage.getItem('mj-theme') || 'light');
+  </script>
+  <style>
+    #board {
+      display: block;
+      margin: 0 auto;
+      background: var(--surface-softer);
+      border-radius: 10px;
+      touch-action: none;
+    }
+    .hint { color: var(--text-soft); font-size: .85em; margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="chips" id="modes"></div>
+    <p class="best" id="best"></p>
+    <div class="info">
+      <div class="stat">Score : <span id="score">0</span></div>
+      <div class="stat">Record : <span id="hiscore">0</span></div>
+    </div>
+    <canvas id="board"></canvas>
+    <p class="hint">Glisse pour diriger le serpent (ou flèches au clavier).</p>
+    <div class="buttons">
+      <button id="startBtn" onclick="Game.startRun()">▶️ Jouer</button>
+      <button onclick="Game.restart()">🔄 Réinitialiser</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="over">
+    <div class="overlay-content">
+      <h2>💥 Perdu</h2>
+      <p id="overMsg"></p>
+      <div class="buttons">
+        <button class="ghost" onclick="Game.closeOver()">Fermer</button>
+        <button onclick="Game.closeOver(); Game.startRun();">Rejouer</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/core.js"></script>
+  <script src="snake.js"></script>
+</body>
+</html>

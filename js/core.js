@@ -102,6 +102,17 @@ function vibrate(pattern) {
   if (navigator.vibrate) navigator.vibrate(pattern);
 }
 
+/**
+ * Largeur utile réelle pour une grille, à l'intérieur de la carte parente
+ * (déduit le padding de la carte). Évite les débordements sur petit écran.
+ */
+function boardArea(board) {
+  const card = board.closest('.card') || board.parentElement;
+  const cs = getComputedStyle(card);
+  const pad = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+  return card.clientWidth - pad;
+}
+
 let _toastTimer;
 function toast(message, duration = 1800) {
   let el = document.querySelector('.toast');

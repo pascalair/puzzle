@@ -77,8 +77,9 @@ const Game = {
 
   layout() {
     const board = document.getElementById('board');
-    const maxWidth = Math.min(window.innerWidth * 0.92, 460);
-    const cell = Math.floor((maxWidth - 2 * (this.cols + 1)) / this.cols);
+    // board : padding 4px (=8 total) + gap 2px entre colonnes.
+    const avail = boardArea(board);
+    const cell = Math.floor((avail - 8 - 2 * (this.cols - 1)) / this.cols);
     board.style.gridTemplateColumns = `repeat(${this.cols}, ${cell}px)`;
     this._cellSize = cell;
   },
@@ -148,24 +149,46 @@ const Game = {
           el.classList.add('flag');
           el.textContent = '🚩';
         }
-        el.addEventListener('click', () => this.tap(r, c));
-        this.bindLongPress(el, r, c);
+        this.bindCellEvents(el, r, c);
         board.appendChild(el);
       }
     }
   },
 
-  // Appui long = poser/retirer un drapeau (alternative au mode drapeau).
-  bindLongPress(el, r, c) {
-    let timer;
-    el.addEventListener('touchstart', () => {
-      timer = setTimeout(() => { timer = null; this.flag(r, c); }, 350);
-    }, { passive: true });
-    const cancel = () => { if (timer) { clearTimeout(timer); } };
-    el.addEventListener('touchend', cancel);
-    el.addEventListener('touchmove', cancel);
-    // Clic droit sur PC
+  // Gère clic (PC), tap court et appui long (drapeau) sur tactile.
+  // L'appui long n'est annulé que si le doigt bouge vraiment (>12px),
+  // pas par les micro-mouvements.
+  bindCellEvents(el, r, c) {
+    // PC : clic droit = drapeau
     el.addEventListener('contextmenu', (e) => { e.preventDefault(); this.flag(r, c); });
+
+    let timer = null, sx = 0, sy = 0, moved = false, longFired = false, touched = false;
+
+    el.addEventListener('touchstart', (e) => {
+      touched = true; moved = false; longFired = false;
+      sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+      timer = setTimeout(() => { timer = null; longFired = true; this.flag(r, c); }, 400);
+    }, { passive: true });
+
+    el.addEventListener('touchmove', (e) => {
+      if (Math.abs(e.touches[0].clientX - sx) > 12 ||
+          Math.abs(e.touches[0].clientY - sy) > 12) {
+        moved = true;
+        if (timer) { clearTimeout(timer); timer = null; }
+      }
+    }, { passive: true });
+
+    el.addEventListener('touchend', (e) => {
+      if (timer) { clearTimeout(timer); timer = null; }
+      e.preventDefault(); // supprime le clic synthétique qui suit
+      if (longFired || moved) return;
+      this.tap(r, c);
+    }, { passive: false });
+
+    el.addEventListener('click', () => {
+      if (touched) { touched = false; return; } // déjà géré par le tactile
+      this.tap(r, c);
+    });
   },
 
   tap(r, c) {

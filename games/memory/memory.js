@@ -81,12 +81,11 @@ const Game = {
 
   layout() {
     const board = document.getElementById('board');
-    const rows = Math.ceil(this.deck.length / COLS);
-    const maxWidth = Math.min(window.innerWidth * 0.9, 420);
-    const size = Math.floor((maxWidth - 8 * (COLS - 1)) / COLS);
+    // gap 8px entre colonnes, pas de padding sur le board.
+    const avail = boardArea(board);
+    const size = Math.floor((avail - 8 * (COLS - 1)) / COLS);
     board.style.gridTemplateColumns = `repeat(${COLS}, ${size}px)`;
     this._size = size;
-    this._rows = rows;
   },
 
   render() {

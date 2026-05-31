@@ -127,10 +127,13 @@
     // Catalogue des jeux. `bestMode`/`bestLabel` servent à afficher le record
     // pertinent sur la carte du hub.
     const GAMES = [
-      { id: 'taquin',  name: 'Taquin',   emoji: '🧩', path: 'games/taquin/',   bestMode: 'taille-4', bestLabel: c => `Record 4×4 : ${c} coups` },
-      { id: '2048',    name: '2048',     emoji: '🔢', path: 'games/2048/',     bestMode: 'classique', bestLabel: s => `Record : ${s}`, lowerIsBetter: false },
-      { id: 'demineur',name: 'Démineur', emoji: '💣', path: 'games/demineur/', bestMode: 'moyen', bestLabel: t => `Record moyen : ${formatTime(t)}` },
-      { id: 'memory',  name: 'Memory',   emoji: '🃏', path: 'games/memory/',   bestMode: 'paires-8', bestLabel: c => `Record : ${c} coups` },
+      { id: 'taquin',   name: 'Taquin',     emoji: '🧩', path: 'games/taquin/',    hasDaily: true,  bestMode: 'taille-4',  bestLabel: c => `Record 4×4 : ${c} coups` },
+      { id: '2048',     name: '2048',       emoji: '🔢', path: 'games/2048/',      hasDaily: true,  bestMode: 'classique', bestLabel: s => `Record : ${s}` },
+      { id: 'demineur', name: 'Démineur',   emoji: '💣', path: 'games/demineur/',  hasDaily: true,  bestMode: 'moyen',     bestLabel: t => `Record moyen : ${formatTime(t)}` },
+      { id: 'memory',   name: 'Memory',     emoji: '🃏', path: 'games/memory/',    hasDaily: true,  bestMode: 'paires-8',  bestLabel: c => `Record : ${c} coups` },
+      { id: 'lightsout',name: 'Lights Out', emoji: '💡', path: 'games/lightsout/', hasDaily: true,  bestMode: 'taille-5',  bestLabel: c => `Record 5×5 : ${c} coups` },
+      { id: 'snake',    name: 'Snake',      emoji: '🐍', path: 'games/snake/',     hasDaily: false, bestMode: 'normal',    bestLabel: s => `Record : ${s}` },
+      { id: 'simon',    name: 'Simon',      emoji: '🎵', path: 'games/simon/',     hasDaily: false, bestMode: 'normal',    bestLabel: n => `Record : niv. ${n}` },
     ];
 
     function renderGames() {
@@ -139,11 +142,14 @@
       GAMES.forEach(g => {
         const best = Records.get(g.id, g.bestMode);
         const dailyDone = Daily.doneToday(g.id);
+        const badge = g.hasDaily
+          ? `<span class="daily-badge ${dailyDone ? 'done' : ''}">${dailyDone ? '✓ jour' : 'défi'}</span>`
+          : '';
         const card = document.createElement('a');
         card.className = 'game-card';
         card.href = g.path;
         card.innerHTML = `
-          <span class="daily-badge ${dailyDone ? 'done' : ''}">${dailyDone ? '✓ jour' : 'défi'}</span>
+          ${badge}
           <span class="emoji">${g.emoji}</span>
           <span class="name">${g.name}</span>
           <p class="best">${best !== null ? g.bestLabel(best) : '—'}</p>

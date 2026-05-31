@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mini-jeux-v2';
+const CACHE_NAME = 'mini-jeux-v3';
 
 const ASSETS = [
   './',
@@ -14,6 +14,12 @@ const ASSETS = [
   'games/demineur/demineur.js',
   'games/memory/index.html',
   'games/memory/memory.js',
+  'games/lightsout/index.html',
+  'games/lightsout/lightsout.js',
+  'games/snake/index.html',
+  'games/snake/snake.js',
+  'games/simon/index.html',
+  'games/simon/simon.js',
   'icon-192.png',
   'icon-512.png',
 ];
